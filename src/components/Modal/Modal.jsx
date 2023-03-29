@@ -1,26 +1,29 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+
 
 
 import { Overlay, ModalWindow } from './Modal.styled';
 
 const Modal = ({onClose , url}) => {
 
-   const onOverlayClick = e => {
+    useEffect (() => {
+      const  onEscClick = e => {
+        if (e.code === 'Escape') {
+          onClose();
+        }
+        }
+
+      document.addEventListener('keydown', onEscClick);
+      return () => {
+      document.removeEventListener('keydown',onEscClick);
+      }
+    },[onClose]);
+
+    const onOverlayClick = e => {
       if (e.currentTarget === e.target)
     onClose();
 
     };
-
-    useEffect (() =>{
-      const  onEscClick = e => {
-        if (e.code === 'Escape')
-          onClose();
-      window.addEventListener('keydown', onEscClick);}
-      return () => {
-        window.removeEventListener('keydown',onEscClick);
-      }
-    },[onClose])
   return (
     <Overlay onClick={onOverlayClick}>
     <ModalWindow>

@@ -1,41 +1,79 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import fetchImgApi from "./Api";
 import Searchbar from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import Modal from "./Modal/Modal";
 import { Loader } from "./Loader/Loader";
-import {Button} from "./Button/Button"
+import {Button} from "../components/Button/Button";
 
 
 const App = () => { 
 
   const [searchQuery, setSearchQuery]=useState ("") 
-  const [items, setItems] = useState [items]
+  const [items, setItems] = useState ([])
   const [isLoading, setIsLoading] = useState(false)
   const [page, setPage] = useState (1)
-  const [totalhits, setTotalhits] = useState (200)
+  const [totalhits, setTotalhits] = useState (0)
+  const [currentLargeImageURL , setCurrentLargeImageURL] = useState("")
+  
+  
+  useEffect (() => {
+    if (!searchQuery){
+      return
+    }
+setIsLoading (true);
 
-  const onOpenModalWithLargeImage = (url) => {
-    this.setState({
-      currentLargeImageURL: url,
-    })}
+async function ApiSearchImg () {
+try {
+setIsLoading(true);
+const data = await fetchImgApi(searchQuery,page)
+console.log(data)
 
-    onModalClose = () => {
-      this.setState({
-        currentLargeImageURL: "",
-      })
+setItems (prevItems=>[...prevItems, ...data.hits]) ;
+setTotalhits (data.totalhits)
 
-     const handleSearch = (searchQuery) => {
-      setSearchQuery (searchQuery),
-      setItems[items], 
-      setIsLoading (false), 
-      setPage(1)
-       }
+if (!data.total){
+  alert ("sorry, no matches found")
+}
+}
 
-    const onLoadMore =()=>{
-      setPage ((page) => page +1 )
-        
+catch (error){
+  console.log (error)
+  }
+
+  finally{
+    setIsLoading(false)
+}
+} 
+ApiSearchImg();
+  } , [searchQuery,page])
+
+
+const onOpenModalWithLargeImage = (url) => {
+    setCurrentLargeImageURL(url)
+    
+    }
+
+const onModalClose = () => {
+      setCurrentLargeImageURL("")
+      
       }
+
+    
+
+const handleSearch =(searchQuery) => {
+        setSearchQuery(searchQuery);
+        setItems([]);
+        setIsLoading (false);
+        setPage(1);
+         }
+
+
+      
+const onLoadMore =()=> {
+        setPage(state => state +1 );
+        console.log(onLoadMore)
+        }
   return(
     <>
     <Searchbar handleSearch={handleSearch}/>
@@ -43,13 +81,11 @@ const App = () => {
     {isLoading &&<Loader/>}
     {items.length > 0 && <ImageGallery items={items} onClick={onOpenModalWithLargeImage}/>}
     {currentLargeImageURL && (<Modal onClose={onModalClose} url={currentLargeImageURL}/>)}
-    {items.length >= 12 && items.length< totalhits && !isLoading && <Button onLoadMore={onLoadMore}/>}
-
-
+    {(items.length !==0 && items.length< totalhits && !isLoading ) && <Button onLoadMore={onLoadMore}/>}
 </>
   )}
-}
-export default App 
+
+export default App ;
 
 
 
