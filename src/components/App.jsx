@@ -71,7 +71,7 @@ const handleSearch =(searchQuery) => {
 
       
 const onLoadMore =()=> {
-        setPage(state => state +1 );
+        setPage(prevState =>prevState +1 );
         console.log(onLoadMore)
         }
   return(
