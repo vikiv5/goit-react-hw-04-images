@@ -77,11 +77,10 @@ const onLoadMore =()=> {
   return(
     <>
     <Searchbar handleSearch={handleSearch}/>
-    
     {isLoading &&<Loader/>}
     {items.length > 0 && <ImageGallery items={items} onClick={onOpenModalWithLargeImage}/>}
     {currentLargeImageURL && (<Modal onClose={onModalClose} url={currentLargeImageURL}/>)}
-    {(items.length !==0 && items.length< totalhits && !isLoading ) && <Button onLoadMore={onLoadMore}/>}
+    {items.length !==totalhits && <Button onLoadMore={onLoadMore}/>}
 </>
   )}
 
